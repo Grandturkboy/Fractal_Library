@@ -1,0 +1,51 @@
+import streamlit as st
+import matplotlib.pyplot as plt
+import math
+import time
+
+st.set_page_config(page_title="Fractal Tree Drawer", layout="wide")
+st.title("🌳 Fractal Tree Drawer")
+
+# --- Sidebar controls ---
+st.sidebar.header("Fractal Controls")
+depth = st.sidebar.slider("Depth", 0, 15, 10)
+angle = st.sidebar.slider("Branch Angle", 0, 180, 30)
+shrink = st.sidebar.slider("Shrink Factor", 0.1, 0.8, 0.75, 0.01)
+length = st.sidebar.slider("Initial Length", 50, 300, 100, 5)
+branches = st.sidebar.slider("Branches", 1, 10, 2, 1)
+crash_prevent = st.sidebar.checkbox("Crash Prevention", value=True)
+
+# --- Drawing setup ---
+fig, ax = plt.subplots(figsize=(8, 6))
+ax.set_aspect("equal")
+ax.axis("off")
+
+functions_used = 0
+start_time = time.time()
+
+def draw_branch(x, y, length, angle_deg, depth):
+    global functions_used
+    if depth < 1:
+        return
+    functions_used += 1
+
+    # calculate end coordinates
+    rad = math.radians(angle_deg)
+    x2 = x + length * math.cos(rad)
+    y2 = y + length * math.sin(rad)
+    ax.plot([x, x2], [y, y2], color="green", lw=max(1, depth/2))
+
+    total_angle = (branches - 1) * angle
+    base_angle = angle_deg - total_angle / 2
+    for i in range(branches):
+        draw_branch(x2, y2, length * shrink, base_angle + i * angle, depth - 1)
+        if crash_prevent and functions_used > 10000:
+            return
+
+# --- Draw ---
+draw_branch(0, -200, length, 90, depth)
+end_time = time.time()
+
+st.pyplot(fig)
+st.write(f"🧮 Functions used: **{functions_used}**")
+st.write(f"⏱️ Time elapsed: **{round(end_time - start_time, 3)} s**")
