@@ -1,4 +1,2 @@
 streamlit
 matplotlib
-math
-time
