@@ -8,20 +8,24 @@ Most files require Tkinter, which is not included in the standard Python library
 Installation Instructions:
 
 Windows:
-    Open Command Prompt or PowerShell and run:
+Open Command Prompt or PowerShell and run:
+    
     pip install tk
 
-    If that doesn’t work, try:
+If that doesn’t work, try:
+
     py -m pip install tk
 
 Linux:
     Debian/Ubuntu-based systems:
+      
     sudo apt-get install python3-tk
 
-    Arch-based systems:
+Arch-based systems:
+ 
     sudo pacman -S python-tk
 
-    If these dont work: 
+If these dont work: 
     May god help you.
 
 Feel free to explore, modify, and experiment with the code. Enjoy creating fractals!
