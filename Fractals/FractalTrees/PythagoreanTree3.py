@@ -42,6 +42,12 @@ animateButton.pack()
 
 def toggleVisuals():
     global extras
+    if rainbow:
+        rainbowButton.invoke()
+    if fill:
+        fillButton.invoke()
+    if triangleFill:
+        triangleFillButton.invoke()
     extras = not extras
     redraw()
 
@@ -49,15 +55,71 @@ extras = False
 extrasButton = tk.Checkbutton(root, text="Show extras", command=toggleVisuals, width=20, )
 extrasButton.pack()
 
+def toggleRainbow():
+    global rainbow
+    if extras:
+        extrasButton.invoke()
+    rainbow = not rainbow
+    redraw()
+
+rainbow = False
+rainbowButton = tk.Checkbutton(root, text="Rainbow", command=toggleRainbow, width=20)
+rainbowButton.pack()
+colors = ["#FF0000","#FF3300","#FF6600","#FF9900","#FFCC00","#FFFF00","#CCFF00","#99FF00","#66FF00","#33FF00","#00FF00","#00FF33","#00FF66","#00FF99","#00FFCC"]
+
+def toggleFill():
+    global fill
+    if extras:
+        extrasButton.invoke()
+    fill = not fill
+    redraw()
+
+fill = False
+fillButton = tk.Checkbutton(root, text="Square Fill", command=toggleFill, width=20)
+fillButton.pack()
+
+def toggleTriangleFill():
+    global triangleFill
+    if extras:
+        extrasButton.invoke()
+    triangleFill = not triangleFill
+    redraw()
+
+triangleFill = False
+triangleFillButton = tk.Checkbutton(root, text="Triangle Fill", command=toggleTriangleFill, width=20)
+triangleFillButton.pack()
+
+def toggleOutline():
+    global outline
+    outline = not outline
+    redraw()
+
+outline = False
+outlineButton = tk.Checkbutton(root, text="Outline", command=toggleOutline, width=20)
+outlineButton.pack()
+
 prevousIter = iteration_slider.get()
 prevousAngle = angle_slider.get()
 prevousLength = length_slider.get()
 
 def PythagoreanIt(p1x, p1y, p2x, p2y, p3x, p3y, p4x, p4y, depth, length, LineAngle, squareAngle):
     
-    global functionsUsed, extras
+    global functionsUsed, extras, rainbow, fill, colors, triangleFill
     functionsUsed += 1
     #Drawing inital square
+    t.pensize(1)
+    t.pencolor("black")
+    t.fillcolor("black")
+    if rainbow:
+        t.pencolor(colors[-depth % len(colors) - 5])
+        t.fillcolor(colors[-depth % len(colors) - 5])
+        t.pensize(2)
+    if fill:
+        if outline:
+            t.pensize(2)
+            t.pencolor("black")
+        t.begin_fill()
+
     t.penup()
     t.goto(p1x, p1y)
     t.pendown()
@@ -66,6 +128,8 @@ def PythagoreanIt(p1x, p1y, p2x, p2y, p3x, p3y, p4x, p4y, depth, length, LineAng
     t.goto(p4x, p4y)
     t.goto(p1x, p1y)
     t.penup()
+    if fill:
+        t.end_fill()
 
     if depth == 0:
         return
@@ -149,6 +213,14 @@ def PythagoreanIt(p1x, p1y, p2x, p2y, p3x, p3y, p4x, p4y, depth, length, LineAng
     t.forward(cube2length)
     c23x = t.xcor()
     c23y = t.ycor()
+
+    #Filling the triangle if needed
+    if triangleFill:
+        t.goto(c11x, c11y)
+        t.begin_fill()
+        t.goto(c22x, c22y)
+        t.goto(c12x, c12y)
+        t.end_fill()
     
     #Initiating the recursion
     PythagoreanIt(c11x, c11y, c12x, c12y, c13x, c13y, c14x, c14y, depth - 1, cube1length / 2, LineAngle, leftHeading)
