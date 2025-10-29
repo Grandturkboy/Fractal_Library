@@ -18,6 +18,7 @@ t.left(90)
 functionsUsed = 0
 start = float(0)
 end = float(0)
+up = True
 
 iteration_slider = tk.Scale(root, from_=0, to=15, resolution=1,
                         orient="horizontal", label="Depth")
@@ -44,11 +45,44 @@ branch_slider = tk.Scale(root, from_=1, to=10, resolution=1,
 branch_slider.set(2)
 branch_slider.pack()
 
-crashLabel = tk.Label(root, text=("Crash Prevention"))
-crashLabel.pack()
-crash_slider = tk.Scale(root, from_=0, to=1, orient="horizontal", length=50, )
-crash_slider.set(1)
-crash_slider.pack()
+def CrashToggle():
+    global canCrash
+    canCrash = not canCrash
+    redraw()
+
+canCrash = False
+crashButton = tk.Checkbutton(root, text="Crash Prevention", width=20, command=CrashToggle)
+crashButton.pack()
+
+
+def animateToggle():
+    global animate
+    animate = not animate
+    redraw()
+
+animate = False
+animateButton = tk.Checkbutton(root, text=" Animate it ", command=animateToggle, width=20)
+animateButton.pack()
+
+def wideToggle():
+    global wide
+    wide = not wide
+    redraw()
+
+wide = False
+wideButton = tk.Checkbutton(root, text="Wide", command=wideToggle, width=20)
+wideButton.pack()
+
+def rainbowToggle():
+    global rainbow
+    rainbow = not rainbow
+    redraw()
+
+rainbow = False
+rainbowButton = tk.Checkbutton(root, text="Rainbow", command=rainbowToggle, width=20)
+rainbowButton.pack()
+colors = ["#FF0000","#FF1900","#FF3300","#FF4C00","#FF6600","#FF7F00","#FF9900","#FFB200","#FFCC00","#FFE500","#FFFF00","#E5FF00","#CCFF00","#B2FF00","#99FF00","#7FFF00","#66FF00","#4CFF00","#33FF00","#19FF00","#00FF00","#00FF19","#00FF33","#00FF4C","#00FF66","#00FF7F","#00FF99","#00FFB2","#00FFCC","#00FFE5","#00FFFF","#00E5FF","#00CCFF","#00B2FF","#0099FF","#007FFF","#0066FF","#004CFF","#0033FF","#0019FF","#0000FF","#1900FF","#3300FF","#4C00FF","#6600FF","#7F00FF","#9900FF","#B200FF","#CC00FF","#E500FF","#FF00FF"]
+
 
 functionCounter = tk.Label(root, text=f"Functions used: {functionsUsed}", width=20)
 functionCounter.pack()
@@ -62,10 +96,9 @@ prevousAngle = angle_slider.get()
 prevousShrink = shrink_slider.get()
 prevousLength = length_slider.get()
 prevousBranch = branch_slider.get()
-prevousCrashPos = crash_slider.get()
 
 def drawBranch(length, t, angle, shrink, branches, iter):
-    global functionsUsed, start, end, timeElapsed
+    global functionsUsed, start, end, timeElapsed, max_iter
 
     if iter < 1:
         end = time.time()
@@ -73,10 +106,21 @@ def drawBranch(length, t, angle, shrink, branches, iter):
         elapsedCounter.config(text=f"Time elapsed: {round(timeElapsed, 3)}")
         return
 
-    if crash_slider.get() == 1 and functionsUsed > 10000:
+    if canCrash == True and functionsUsed > 10000:
         t.penup()
         return
     
+    if rainbow == True:
+        max_iter = iteration_slider.get()
+        color_index = int((max_iter - iter) / max_iter * (len(colors) - 1))
+        t.pencolor(colors[color_index])
+    else:
+        t.pencolor("black")
+
+    if wide == True:
+        t.pensize(max(2, iter / max_iter * 16))
+    else:
+        t.pensize(1)
         
     totalAngle = (branches - 1) * angle
     saved = t.heading()
@@ -89,7 +133,9 @@ def drawBranch(length, t, angle, shrink, branches, iter):
         t.right(angle)
 
     t.setheading(saved)
+    t.penup()  
     t.backward(length)
+    t.pendown()
 
     functionsUsed += 1
     functionCounter.config(text=f"Functions used: {functionsUsed}")
@@ -100,23 +146,21 @@ def sliderCheck():
     currentShrink = shrink_slider.get()
     currentLength = length_slider.get()
     currentBranch = branch_slider.get()
-    currentCrashPos = crash_slider.get()
     if (currentIter != prevousIter or currentAngle != prevousAngle or
         currentShrink != prevousShrink or currentLength != prevousLength or
-        currentBranch != prevousBranch or currentCrashPos != prevousCrashPos):
+        currentBranch != prevousBranch):
         prevousIter = currentIter
         prevousAngle = currentAngle
         prevousShrink = currentShrink
         prevousLength = currentLength
         prevousBranch = currentBranch
-        prevousCrashPos = currentCrashPos
         redraw()
     root.after(10, sliderCheck)
 
 
 
 def redraw():
-    global functionsUsed, start
+    global functionsUsed, start, max_iter, up
     functionsUsed = 0
     t.clear()
     t.penup()
@@ -124,16 +168,21 @@ def redraw():
     t.setheading(90)
     t.pendown()
     
-    if branch_slider.get() % 2 == 0:
-        start = time.time()
-        drawBranch(length_slider.get(), t, angle_slider.get() * 2, shrink_slider.get(), branch_slider.get(), iteration_slider.get())
-    else:
-        start = time.time()
-        drawBranch(length_slider.get(), t, angle_slider.get(), shrink_slider.get(), branch_slider.get(), iteration_slider.get())
+    max_iter = iteration_slider.get()
+    start = time.time()
+    drawBranch(length_slider.get(), t, angle_slider.get(), shrink_slider.get(), branch_slider.get(), iteration_slider.get())
 
+    if animate:
+        if up == True:
+            angle_slider.set(angle_slider.get() + 2)
+            if angle_slider.get() >= 180:
+                up = False
+        else:
+            angle_slider.set(angle_slider.get() - 2)
+            if angle_slider.get() <= 0:
+                up = True
     screen.update()
 
 redraw()
 sliderCheck()
-
 root.mainloop()
