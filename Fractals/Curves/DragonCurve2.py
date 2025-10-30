@@ -70,7 +70,6 @@ def drawCurve(deg, lenght, iteration, startX, startY, turningState):
         t.forward(lenght)
         t.penup()
         
-        return
 def redraw():
     global functionsUsed
     functionsUsed = 0
