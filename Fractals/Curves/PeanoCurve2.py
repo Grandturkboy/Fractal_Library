@@ -94,7 +94,7 @@ def redraw():
     t.setheading(90)
     t.pendown()
 
-    PeanoIt(iter = iteration_slider.get(), angle = angle_slider.get(), length = 3 * (size_slider.get() / (3 ** iteration_slider.get())))
+    PeanoIt(iter = iteration_slider.get(), angle = angle_slider.get(), length = 3 * (size_slider.get() / ((3 ** iteration_slider.get()) - 1)))
     screen.update()
 
 def hasIterationChanged():
