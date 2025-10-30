@@ -53,7 +53,7 @@ def SauageIt(iter, angle, length):
         return
     
     if rainbow:
-        t.pencolor(colors[functionsUsed % len(colors)])
+        t.pencolor(colors[round(functionsUsed / 8) % len(colors)])
         t.pensize(3)
     else:
         t.pencolor("black")
@@ -82,7 +82,7 @@ def redraw():
     functionsUsed = 0
     t.clear()
     t.penup()
-    t.setpos(-200, 0)
+    t.setpos(-size_slider.get() / 2, 0)
     t.setheading(0)
     t.pendown()
 
