@@ -55,6 +55,9 @@ def KochIt(iter, angle, length):
         t.forward(length)
         return
 
+    angle_rad = math.radians(angle)
+    kochRatio = 2 + 2 * math.sin(angle_rad)
+
     if rainbow:
         t.pencolor(colors[functionsUsed % len(colors)])
         t.pensize(3)
@@ -65,26 +68,29 @@ def KochIt(iter, angle, length):
     functionsUsed += 1
     functionCounter.config(text=f"Functions used: {functionsUsed}")
 
-    KochIt(iter - 1, angle, length / kochRatio)
-    t.left(90- angle)
-    KochIt(iter - 1, angle, length / kochRatio)
-    t.right(180 - angle * 2)
-    KochIt(iter - 1, angle, length / kochRatio)
+    next_len = length / kochRatio
+    KochIt(iter - 1, angle, next_len)
     t.left(90 - angle)
-    KochIt(iter - 1, angle, length / kochRatio)
+    KochIt(iter - 1, angle, next_len)
+    t.right(180 - angle * 2)
+    KochIt(iter - 1, angle, next_len)
+    t.left(90 - angle)
+    KochIt(iter - 1, angle, next_len)
 
 def redraw():
     global functionsUsed
     functionsUsed = 0
     t.clear()
     t.penup()
-    t.setpos(-200, 0)
+
+    size = size_slider.get()
+    t.setpos(-size / 2.0, 0)
     t.setheading(0)
     t.pendown()
 
-    kochRatio =  2 + 2 * math.sin(math.radians(angle_slider.get()))
+    top_length = float(size)
 
-    KochIt(iter = iteration_slider.get(), angle = angle_slider.get(), length = (3 * size_slider.get() / kochRatio) * 0.8095 ** iteration_slider.get())
+    KochIt(iter=iteration_slider.get(), angle=angle_slider.get(), length=top_length)
     screen.update()
 
 def hasIterationChanged():
