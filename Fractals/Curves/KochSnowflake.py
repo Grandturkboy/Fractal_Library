@@ -55,6 +55,8 @@ def KochIt(iter, angle, length):
         t.forward(length)
         return
     
+    kochRatio =  2 + 2 * math.sin(math.radians(angle_slider.get()))
+
     if rainbow:
         t.pencolor(colors[functionsUsed % len(colors)])
         t.pensize(3)
@@ -78,14 +80,12 @@ def redraw():
     functionsUsed = 0
     t.clear()
     t.penup()
-    t.setpos(-200, 0)
-    t.setheading(0)
+    t.setpos(0, -size_slider.get() * math.sqrt(2) / 2 + 50)
+    t.setheading(120)
     t.pendown()
 
-    kochRatio =  2 + 2 * math.sin(math.radians(angle_slider.get()))
-
     for i in range(3):
-        KochIt(iter = iteration_slider.get(), angle = angle_slider.get(), length = (3 * size_slider.get() / kochRatio) * 0.8095 ** iteration_slider.get())
+        KochIt(iter = iteration_slider.get(), angle = angle_slider.get(), length = size_slider.get())
         t.right(120)
     screen.update()
 
