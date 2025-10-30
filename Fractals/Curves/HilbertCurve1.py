@@ -81,10 +81,25 @@ def redraw():
     functionsUsed = 0
     t.clear()
     t.penup()
-    t.setpos(-size_slider.get() / 2.0, size_slider.get() / 2.0)
+
+    n = iteration_slider.get()
+    size = float(size_slider.get())
+
+    denom = (2 ** n) - 1
+    if denom <= 0:
+        t.setpos(0, 0)
+        t.setheading(0)
+        screen.update()
+        return
+
+    step = size / denom
+    total_width = step * denom
+
+    t.setpos(-total_width / 2.0, total_width / 2.0)
+    t.setheading(0)
     t.pendown()
 
-    hilbertIt(iter = iteration_slider.get(), angle = angle_slider.get(), length = size_slider.get() / (2 ** iteration_slider.get()))
+    hilbertIt(iter = n, angle = angle_slider.get(), length = step)
     screen.update()
 
 def hasIterationChanged():
