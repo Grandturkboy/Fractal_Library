@@ -18,29 +18,32 @@ t.hideturtle()
 t.speed(0)
 
 var = tk.IntVar(value=1)
-PeanoSelect = ttk.Radiobutton(root, text="Peano Curve", variable=var,value=1)
+PeanoSelect = ttk.Radiobutton(root, text="Peano Curve", variable=var,value=1, command=lambda: angle_slider.set(90))
 PeanoSelect.pack(anchor="w", padx=30, pady=(20, 0))
 
-HilbertSelect = ttk.Radiobutton(root, text="Hilbert Curve", variable=var,value=2)
+HilbertSelect = ttk.Radiobutton(root, text="Hilbert Curve", variable=var,value=2, command=lambda: angle_slider.set(90))
 HilbertSelect.pack(anchor="w", padx=30)
 
-DragonSelect = ttk.Radiobutton(root, text="Dragon Curve", variable=var,value=3)
+DragonSelect = ttk.Radiobutton(root, text="Dragon Curve", variable=var,value=3, command=lambda: angle_slider.set(90))
 DragonSelect.pack( anchor="w", padx=30)
 
-LevyCSelect = ttk.Radiobutton(root, text="Levy C Curve", variable=var,value=4)
+LevyCSelect = ttk.Radiobutton(root, text="Levy C Curve", variable=var,value=4, command=lambda: angle_slider.set(90))
 LevyCSelect.pack( anchor="w", padx=30)
 
-KochCSelect = ttk.Radiobutton(root, text="Koch Curve", variable=var,value=5)
+KochCSelect = ttk.Radiobutton(root, text="Koch Curve", variable=var,value=5, command=lambda: angle_slider.set(30))
 KochCSelect.pack( anchor="w", padx=30)
 
-KochSSelect = ttk.Radiobutton(root, text="Koch Snowflake", variable=var,value=6)
+KochSSelect = ttk.Radiobutton(root, text="Koch Snowflake", variable=var,value=6, command=lambda: angle_slider.set(30))
 KochSSelect.pack( anchor="w", padx=30)
 
-MinkowskiSSelect = ttk.Radiobutton(root, text="Minkowski Sausage", variable=var,value=7)
+MinkowskiSSelect = ttk.Radiobutton(root, text="Minkowski Sausage", variable=var,value=7, command=lambda: angle_slider.set(90))
 MinkowskiSSelect.pack( anchor="w", padx=30)
 
-MinkowskiISelect = ttk.Radiobutton(root, text="Minkowski Island", variable=var,value=8)
+MinkowskiISelect = ttk.Radiobutton(root, text="Minkowski Island", variable=var,value=8, command=lambda: angle_slider.set(90))
 MinkowskiISelect.pack(  anchor="w", padx=30)
+
+GosperSelect = ttk.Radiobutton(root, text="Gosper Curve", variable=var,value=9, command=lambda: angle_slider.set(60))
+GosperSelect.pack( anchor="w", padx=30)
 
 iteration_slider = tk.Scale(root, from_=0, to=14, resolution=1, orient="horizontal", label="Iterations")
 iteration_slider.set(1)
@@ -152,6 +155,16 @@ def redraw():
         for i in range (4):
             MinkowskiSausage(iteration_slider.get(), size, angle_slider.get())
             t.right(90)
+    
+    elif var.get() == 9:
+        t.setpos(-size_slider.get() / 2, size_slider.get() * math.sqrt(3) / 6)
+        t.setheading(0 + iteration_slider.get() * angle_slider.get() / 3)
+        t.pendown()
+
+        scale = 1 / (2 * math.cos(math.radians(angle_slider.get() / 2)) + 1)
+        length = size_slider.get() * (scale ** iteration_slider.get())
+
+        GosperCurve(iteration_slider.get(), length, angle_slider.get(), True)
 
     end = time.time()
     timeElapsed = end - start
@@ -178,7 +191,7 @@ def PeanoCurve(iteration, size, angle):
         t.dot(0, "black")
         return
     
-    if crashProt and functionsUsed > 10000:
+    if crashProt and functionsUsed > 25000:
         return
 
     if rainbow:
@@ -221,7 +234,7 @@ def HilbertCurve(iteration, size, angle):
         t.dot(0, "black")
         return
     
-    if crashProt and functionsUsed > 10000:
+    if crashProt and functionsUsed > 25000:
         return
 
     if rainbow:
@@ -256,7 +269,7 @@ def DragonCurve(iteration, lenght, angle, turningState):
         t.pencolor("black")
         t.pensize(1)
 
-    if crashProt and functionsUsed > 10000:
+    if crashProt and functionsUsed > 17000:
         return
 
     if iteration != 0:
@@ -289,7 +302,7 @@ def KochCurve(iteration, length, angle):
         t.dot(0, "black")
         return
 
-    if crashProt and functionsUsed > 10000:
+    if crashProt and functionsUsed > 22000:
         return
     
     kochRatio =  2 + 2 * math.sin(math.radians(angle_slider.get()))
@@ -320,7 +333,7 @@ def MinkowskiSausage(iter, length, angle):
         t.dot(0, "black")
         return
     
-    if crashProt and functionsUsed > 10000:
+    if crashProt and functionsUsed > 25000:
         return
     
     if rainbow:
@@ -344,6 +357,56 @@ def MinkowskiSausage(iter, length, angle):
     MinkowskiSausage(iter - 1, length / 4, angle)
     t.left(angle)
     MinkowskiSausage(iter - 1, length / 4, angle)
+
+def GosperCurve( iteration, size, angle, isA):
+    global functionsUsed
+    functionsUsed += 1
+    functionCounter.config(text=f"Functions used: {functionsUsed}")
+
+    if iteration <= 0:
+        t.forward(size)
+        return
+    
+    if crashProt and functionsUsed > 100000:
+        return
+
+    if rainbow:
+        t.pencolor(colors[round(functionsUsed / 7) % len(colors)])
+        t.pensize(3)
+    else:
+        t.pencolor("black")
+        t.pensize(1)
+
+    if isA:
+        GosperCurve(iteration - 1, size, angle, True)
+        t.right(angle)
+        GosperCurve(iteration - 1, size, angle, False)
+        t.right(2 * angle)
+        GosperCurve(iteration - 1, size, angle, False)
+        t.left(angle)
+        GosperCurve(iteration - 1, size, angle, True)
+        t.left(2 * angle)
+        GosperCurve(iteration - 1, size, angle, True)
+        GosperCurve(iteration - 1, size, angle, True)
+        t.left(angle)
+        GosperCurve(iteration - 1, size, angle, False)
+        t.right(angle)
+    else:
+        t.left(angle)
+        GosperCurve(iteration - 1, size, angle, True)
+        t.right(angle)
+        GosperCurve(iteration - 1, size, angle, False)
+        GosperCurve(iteration - 1, size, angle, False)
+        t.right(2 * angle)
+        GosperCurve(iteration - 1, size, angle, False)
+        t.right(angle)
+        GosperCurve(iteration - 1, size, angle, True)
+        t.left(2 * angle)
+        GosperCurve(iteration - 1, size, angle, True)
+        t.left(angle)
+        GosperCurve(iteration - 1, size, angle, False)
+
+
 
 redraw()
 sliderCheck()
