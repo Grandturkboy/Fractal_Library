@@ -5,7 +5,7 @@ Welcome! This repository contains my fractal drawing code, available for anyone 
 Requirements:
 Most files require Tkinter, which is not included in the standard Python library. You’ll need to install it to run the code.
 
-# Installation Instructions:
+# Tkinter Installation Instructions:
 
 Windows:
 Open Command Prompt or PowerShell and run:
