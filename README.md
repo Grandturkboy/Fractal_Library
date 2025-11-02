@@ -1,11 +1,11 @@
-Fractal Drawing Code Repository
+#Fractal Drawing Code Repository
 
 Welcome! This repository contains my fractal drawing code, available for anyone to use and experiment with. Most of the scripts use Python’s Tkinter library for graphical output.
 Requirements
 
 Most files require Tkinter, which is not included in the standard Python library. You’ll need to install it to run the code.
 
-Installation Instructions:
+#Installation Instructions:
 
 Windows:
 Open Command Prompt or PowerShell and run:
